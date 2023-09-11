@@ -40,11 +40,11 @@ def make_subplots(electric_field, show=False):
 
 # define the important values for the simulation
 wavelength = 0.589*um # wavelength of the light
-length_xy = 2*mm # length of the simulation in x and y
+length_xy = 5*mm # length of the simulation in x and y
 length_xy_init = 0.125*length_xy 
-num_pix_xy = 40*240 # number of pixels in each direction
+num_pix_xy = 20*240 # number of pixels in each direction
 pinhole_radius = 0.5*um # radius of the PDI pinhole
-z_dist = 10000*um # total distance to propagate the beam
+z_dist = 1000*um # total distance to propagate the beam
 D_tele = 1000*mm # telescope diameter
 f = 14.8
 beam_rad = 1.22*f*wavelength # initial radius of the beam
