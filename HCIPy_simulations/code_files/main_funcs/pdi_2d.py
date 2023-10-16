@@ -40,13 +40,13 @@ def make_subplots(electric_field, show=False):
 
 # define the important values for the simulation
 wavelength = 0.589*um # wavelength of the light
-length_xy = 5*mm # length of the simulation in x and y
-length_xy_init = 0.125*length_xy 
-num_pix_xy = 20*240 # number of pixels in each direction
+length_xy = 4*mm # length of the simulation in x and y
+length_xy_init = 0.0125*length_xy 
+num_pix_xy = 40*240 # number of pixels in each direction
 pinhole_radius = 0.5*um # radius of the PDI pinhole
 z_dist = 1000*um # total distance to propagate the beam
 D_tele = 1000*mm # telescope diameter
-f = 14.8
+f = 1.48
 beam_rad = 1.22*f*wavelength # initial radius of the beam
 zernike_ns = [2] # list of zernike n co-efficients
 zernike_ms = [-2] # list of zernike m co-efficients
@@ -90,11 +90,11 @@ u6 = u7.RS(z=z_dist,verbose= True,new_field=True)
 #draw_several_fields((u0,u6),titles=('Original','Original Final Image'),logarithm=True)
 
 make_subplots(u6)
-np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/initial_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u6.u)
+#np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/initial_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u6.u)
 # define the pinhole plate
 t0 = Scalar_mask_XY(xs,ys,wavelength)
 t0.square(r0=(0*um,0*um),size=(length_xy,length_xy),angle=0)
-amp = 0.005
+amp = 0.05
 t0.binarize(kind='amplitude',
             bin_level = None,
             level0=amp,
@@ -128,7 +128,7 @@ u2.fast=False
 u3 = u2.RS(z=z_dist,verbose= True,new_field=True)
 
 u3_detector = rebin(u3.u,int(np.shape(u3.u)[0]/240))
-np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/final_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u3.u)
+#np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/final_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u3.u)
 
 #draw_several_fields((t1,u3),titles=('Mask','PDI Final Image'),logarithm=True)
 
@@ -169,7 +169,7 @@ u5 = u4.RS(z=z_dist,verbose= True,new_field=True)
 
 u5_detector = rebin(u5.u,int(np.shape(u5.u)[0]/240))
 
-np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/spherical_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u5.u)
+#np.save('/home/ehold13/PhD/HCIPy_simulations/output_files/spherical_m'+str(zernike_ms[0])+'_n'+str(zernike_ns[0])+'.npy',u5.u)
 
 make_subplots(u5)
 del u4,u5,t2,t3

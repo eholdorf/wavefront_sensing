@@ -7,4 +7,5 @@ __version__ = "0.1"
 
 from . import fdtd_meep_2d
 from . import fdtd_meep_3d
-
+from . import fdtd_meep_multipinhole_2d
+from . import fdtd_meep_multipinhole_3d

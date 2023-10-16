@@ -4,10 +4,12 @@ import aotools
 from diffractio import um, mm, degrees
 from diffractio.scalar_masks_XY import Scalar_mask_XY
 from diffractio.scalar_sources_XY import Scalar_source_XY
-from diffractio.scalar_masks_XYZ import Scalar_mask_XYZ
+from diffractio.scalar_masks_XZ import Scalar_mask_XZ
 from diffractio.scalar_fields_XYZ import Scalar_field_XYZ
-from diffractio.vector_sources_XY import Vector_source_XY
+from diffractio.scalar_sources_X import Scalar_source_X
+from diffractio.scalar_masks_X import Scalar_mask_X
 from diffractio.utils_drawing import draw_several_fields  
+import copy
 # double slit experiment - diffractio
 if False:
     # define the important values for the simulation
@@ -53,7 +55,7 @@ if False:
     plt.show()
     
 # double slit AOtools
-if True:
+if False:
     # define the important values for the simulation
     wavelength = 1.5*um
     length_xy = 1.5*mm
@@ -107,5 +109,151 @@ if True:
     plt.show()
     
     
+# 2D PDI
+if True:
+    # define the important values for the simulation
+    wavelength = 0.589*um
+    length_x = 12*um
+    length_z = 18*um
+    thickness = 3*um
+    position = -length_z/2+length_x/10+thickness/2
+    
+    pinhole_pos = 2*um
+    window_pos = -1*um
+    
+    pinhole_rad = 0.3*um
+    window_rad = 0.6*um
+    
+    
+    res_fact = 100
+    
+    index = [0,1,2]
+    
+    for i in index:
+        
+        num = int(res_fact/wavelength*max([length_x,length_z]))
+        # define the x,y,z space
+        xs = np.linspace(-length_x/2,length_x/2,num)
+        zs = np.linspace(-length_z/2,length_z/2,num)
+
+        # define the source
+        u0 = Scalar_source_X(xs,wavelength)
+        u0.plane_wave(A=1)
+
+
+        t1 = Scalar_mask_XZ(xs,zs,wavelength)
+        #t1.rectangle(r0=(pinhole_pos,position),
+        #          size=(2*pinhole_rad,thickness),
+        #          angle=0,
+        #          refraction_index=1)
+        
+        t1.rectangle(r0=(length_x/4+pinhole_pos/2+window_rad/2,position),
+                  size=(length_x/2-pinhole_pos-pinhole_rad,thickness),
+                  angle=0,
+                  refraction_index=1e6+1e10j)
+                  
+        t1.rectangle(r0=(pinhole_pos-pinhole_rad - 0.5*(pinhole_pos-pinhole_rad +abs(window_pos)-window_rad),position),
+                     size = (pinhole_pos-pinhole_rad + abs(window_pos) -window_rad,thickness),
+                     angle =0,
+                     refraction_index=1e6+1e10j
+                     )
+                  
+        t1.rectangle(r0=(window_pos,position),
+                  size=(2*window_rad,thickness),
+                  angle=0,
+                  refraction_index=1+0.01j)
+        
+        t1.rectangle(r0=(-(length_x/4 + abs(window_pos/2) + window_rad/2),position),
+                     size = ((length_x/2 - abs(window_pos)-window_rad),thickness),
+                     angle= 0,
+                     refraction_index = 1e6+1e10j
+        
+        )
+
+
+        plate = t1
+        
+        plate.incident_field(u0)
+        
+        if i ==0:
+            plate.RS(verbose=True)
+        elif i==1:
+            plate.BPM(verbose=True)
+            #final = abs(plate.u)**2
+        elif i==2:
+            plate.WPM(verbose=True)
+            #final -= abs(plate.u)**2
+
+        #plate.draw(kind='intensity',draw_borders=True)
+        
+        plt.figure()
+        plt.imshow(abs(plate.u)**2)
+        
+        
+        del plate,t1,u0
+    
+    meep = np.load('/home/ehold13/PhD/conda_meep/output_files/ey_r_0.3_bw_1.npy')+np.load('/home/ehold13/PhD/conda_meep/output_files/ez_r_0.3_bw_1.npy')
+    meep = meep.T
+    
+    plt.figure()
+    plt.imshow(abs(meep)**2)
+    plt.show()
+    
+if False:
+    # define the important values for the simulation
+    wavelength = 0.589*um
+    length_x = 10*um
+    length_y = 10*um
+    length_z = 100*um
+    thickness = 3*um
+    
+    pinhole_pos = 2*um
+    window_pos = -1*um
+    
+    pinhole_rad = 0.3*um
+    window_rad = 0.6*um
+    
+    
+    res_fact = 10
+    
+    index = [0,1,2]
+    
+    for i in index:
+        
+        num = int(2 ** (np.log(res_fact/wavelength*max([length_x,length_z])-2)))
+        # define the x,y,z space
+        xs = np.linspace(-length_x/2,length_x/2,num)
+        ys = np.linspace(-length_y/2,length_y/2,num)
+        zs = np.linspace(-length_z/2,length_z/2,num)
+
+        # define the source
+        u0 = Scalar_source_XY(xs,ys,wavelength)
+        u0.plane_wave(A=1)
+
+
+        t1 = Scalar_mask_XY(xs,ys,wavelength)
+        
+        t1.circle(r0=(pinhole_pos,0),
+        radius = pinhole_rad, 
+        angle = 0)
+        
+        t1.circle(r0=(window_pos,0),
+        radius = window_rad, 
+        angle = 0)
+
+        plate = t1
+        plate.incident_field = u0
+        if i ==0:
+            plate.fast = True
+            plate.RS(z = length_z,verbose=True)
+
+        plate.draw(kind='intensity')
+        plt.show()
+        
+        
+        del plate,t1,u0
+    
+
+    plt.show()
 
 

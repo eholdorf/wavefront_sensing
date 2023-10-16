@@ -51,13 +51,13 @@ def make_subplots(electric_field,n,length,title='',show=False):
 
 # define the important values for the simulation
 wavelength = 0.589*um # wavelength of the light
-num_pix_xy = 240 # number of pixels in each direction
+num_pix_xy = 40*240 # number of pixels in each direction
 f = 14.8
 beam_rad = 1.22*f*wavelength*um # initial radius of the beam
-pinhole_radius = 0.5*um # radius of the PDI pinhole
+pinhole_radius = 0.9*beam_rad # radius of the PDI pinhole
 length_xy_init = 4*beam_rad
-zernike_ns = [2] # list of zernike n co-efficients
-zernike_ms = [-2] # list of zernike m co-efficients
+zernike_ns = [1] # list of zernike n co-efficients
+zernike_ms = [1] # list of zernike m co-efficients
 zernike_cnms = [0.1] # coefficient of each zernike mode in radians
 A = 1 # amplitude of the wave
 
@@ -78,26 +78,21 @@ u0.zernike_beam(A=A,r0=(0*um,0*um),radius=beam_rad,n=zernike_ns,m=zernike_ms,c_n
 
 u0 *= u
 
-t0 = Scalar_mask_XY(xs,ys,wavelength)
-t0.lens(r0=(0,0),focal=(500*um,500*um),radius=(length_xy_init/2,length_xy_init/2))
-
-u1 = u0* t0
-
 # convert units to be in m from micron
 wavelength *= 10**-6
 length_xy_init *= 10**-6
 pinhole_radius *= 10**-6
 beam_rad *= 2*10**-6
-z_dist = 500e-6 # m total distance to propagate the beam
+z_dist = 20e-6 # m total distance to propagate the beam
 coeff = 2
 final_res = max([coeff * beam_rad*(1+(wavelength*z_dist/(np.pi*(beam_rad)**2))**2)**0.5, coeff*2.44*wavelength*z_dist/(2*pinhole_radius)])
-print(final_res)
 
-focus = aotools.opticalpropagation.twoStepFresnel(u1.u,wavelength,length_xy_init/num_pix_xy,length_xy_init/num_pix_xy,z_dist)
+
+focus = aotools.opticalpropagation.twoStepFresnel(u0.u,wavelength,length_xy_init/num_pix_xy,length_xy_init/num_pix_xy,z_dist)
 
 make_subplots(focus,num_pix_xy,length_xy_init)
 
-amp = 0.05
+amp = 0.1
 rad = (pinhole_radius)/(length_xy_init) *num_pix_xy
 
 if rad < 1:

@@ -5,5 +5,6 @@
 __author__ = "Erin Holdorf <erin.holdorf@anu.edu.au>"
 __version__ = "0.1"
 
-from . import fresnel_hcipy
+#from . import fresnel_hcipy
+from . import pdi_three_beams
 
