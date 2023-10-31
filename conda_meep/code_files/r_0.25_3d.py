@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
 wavelength = 0.589
-x_dist = 3*wavelength
-y_dist = 10*wavelength
-z_dist = 10*wavelength
+x_dist = 2
+y_dist = 6
+z_dist = 6
 dists = [x_dist, y_dist,z_dist]
 
 pml_depth = min(dists)/10
@@ -17,9 +17,9 @@ plate_pos_z = 0
 plate_pos = [plate_pos_x,plate_pos_y,plate_pos_z]
 
 radius = 0.25
-plate_thickness = 0.3
-beam_width = 10*wavelength
-eps = 1.5 + 1e6j
+plate_thickness = 1
+beam_width = 1
+eps = 1.5 + 10j
 
 
 eps_data, ez_data, ey_data, ex_data = fdtd_meep_3d.run(dists, plate_pos,plate_thickness, radius, wavelength,beam_width,eps,pml_depth)
